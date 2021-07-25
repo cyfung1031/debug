@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport"
+        content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=0,viewport-fit=cover"> 
+    <title>Testing</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <nav class="render_nav_01  render_nav_02">
+            <div class="render_nav_div_01">
+                <div id="subCatMobile" style="width: 100%; display: block;">
+                    <div class="render_subcat_01">
+                        <ul class="render_subcat_ul ">
+                            <li class="render_subcat_li  render_subcat_li_selected"><a
+                                    href="?order=now">Tab1</a></li>
+                            <li class="render_subcat_li  "><a
+                                    href="?order=hot">Tab2</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="render_nav_txt_01 render_nav_txt_02">
+                    <div class="render_nav_txt_03"><span>吹水台</span></div>
+                </div>
+                <div class="render_nav_txt_10 render_nav_txt_11"><span title="F5" data-tip="F5"
+                        currentitem="false"><i class="i-refresh"></i></span><span data-tip="發表主題" title="發表主題"
+                        currentitem="false"><i class="i-plus"></i></span></div>
+            </div>
+            <div class="render_nav_block_01"></div>
+        </nav>
+        <div class="render_block_r01 "><b class="render_block_r01_b" style="opacity: 0;"></b>
+            <div class="render_block_r02" style="left: -280px;">
+                <div class="render_block_r03">
+                    <div
+                        style="background-image: none; height: 26px; width: 26px; filter: none;">
+                    </div>
+                    <div class="render_block_r03_01">
+                        
+                    </div>
+                </div>
+                <div class="render_block_r04">
+                    <div class="render_block_r04_01">
+                    </div>
+                    <div class="render_block_r04_02">
+                        <div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="render_menu_m01"><span><i class="i-menu"></i></span><span title="F5" data-tip="F5"
+                currentitem="false"><i class="i-refresh"></i></span><span data-tip="發表主題" title="發表主題"
+                currentitem="false"><i class="i-plus"></i></span><span><i class="i-settings"></i></span></div>
+        <div id="splitView" class="render_view_main ">
+            <div class="render_panel" id="leftPanel">
+                <div class="render_thead_list"></div>
+            </div>
+        </div>
+        <div class="render_view_bottom">
+            <div></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+-(() => {
+    let index = 0;
+    let c = document.querySelector('.render_thead_list');
+    let str = '';
+    for (let i = 0; i < 60; i++) {
+
+        index++;
+        str += `
+    <div class="thread_ct01">
+    <div class="thread_ct02">
+        <div class="thread_ct03a">
+            <div class="cbk_k01"></div>
+            <div class="info_k01">
+                <span class="st_u01 st_u01r">User${index}</span><span class="st_w01 st_time">time${index}</span>
+            </div>
+            <div class="page_k01">1 頁 <i class="i-menu-down"></i><select class="page_s01">
+                    <option value="">選擇頁數</option>
+                    <option value="123|1">1 頁</option>
+                </select></div>
+        </div>
+        <div class="thread_ct03a thread_ct03b">
+            <div class="cbk_k01"></div><a class="cbk_a01" href="#thread"></a>
+            <div class="content_k01"><span class="st_content">Content${index}</span></div><a class="tag_a01 " href="#ct_right">吹水台</a>
+        </div>
+    </div>         
+    </div>
+    `;
+
+    }
+
+    c.innerHTML = str;
+
+
+        const prettyElm = function(elm) {
+            if (!elm || !elm.nodeName) return null;
+            const eId = elm.id || null;
+            const eClsList = elm.classList || [];
+            return [
+                elm.nodeName.toLowerCase(), 
+                (typeof eId == 'string' ? "#" + eId : ''), 
+                [...eClsList].map(s=>'.'+s).join('')
+            ].join('').trim();
+        }
+
+        let timeout = 0;
+        function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+let _runs = [];
+
+let run_count = 0;
+const handler = function(evt){
+
+
+    let {type, target}=evt;
+
+    if(type == 'click' && target.nodeName=='A') evt.preventDefault();
+
+    timeout = Date.now()+160;
+
+    _runs.push(()=>{
+
+
+        let threads = document.querySelectorAll('.thread_ct02');
+        if(threads.length<4) return;
+        let s_last = threads[threads.length-1];
+        let s_first =threads[0];
+
+        s_last.querySelector('.st_u01').textContent=`'${type}' event`;
+        s_last.querySelector('.st_content').textContent=`at element "${prettyElm(target)}"`;
+        s_last.querySelector('.st_time').textContent=`#${run_count}`;
+
+        s_first.parentNode.insertBefore(s_last,s_first);
+
+    })
+
+    if(_runs.length>1)return;
+
+    (async ()=>{
+
+        while(timeout>Date.now()) await sleep(40);
+        let runs = _runs;
+        _runs = [];
+
+        run_count++;
+
+        for(const f of runs) f();
+
+
+    })();
+
+
+
+}
+
+
+    document.addEventListener('click', handler, true);
+    document.addEventListener('mousedown', handler, true);
+    document.addEventListener('mouseup', handler, true);
+    document.addEventListener('touchstart', handler, true);
+    document.addEventListener('touchend', handler, true);
+
+
+})();
+</script>
+</body>
+</html>
